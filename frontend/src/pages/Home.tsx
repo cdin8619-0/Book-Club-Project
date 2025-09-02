@@ -6,4 +6,11 @@ function Home() {
       <h1 className="text-2xl font-bold">Welcome to the Book Club</h1>
       <p className="mt-2">Manage your books and authors easily.</p>
       <div className="mt-4 space-x-3">
-     
+        <a className="text-blue-600 underline" href="/authors">Authors</a>
+        <a className="text-blue-600 underline" href="/books">Books</a>
+      </div>
+    </div>
+  );
+}
+
+export default Home;
