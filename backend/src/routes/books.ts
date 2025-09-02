@@ -37,12 +37,19 @@ export default async function bookRoutes(server: FastifyInstance) {
     const { id } = request.params as { id: string };
     try {
       const data = bookSchema.parse(request.body);
+      const existingBook = await prisma.book.findUnique({ where: { id: Number(id) } });
+      if (!existingBook) {
+        return reply.status(404).send({ error: 'Book not found' });
+      }
       const updatedBook = await prisma.book.update({
         where: { id: Number(id) },
         data,
       });
       return updatedBook;
     } catch (error) {
+      if (error instanceof Error && error.message.includes('Record to update not found')) {
+        return reply.status(404).send({ error: 'Book not found' });
+      }
       return reply.status(400).send({ error: (error as Error).message });
     }
   });

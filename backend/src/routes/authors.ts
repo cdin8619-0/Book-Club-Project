@@ -35,12 +35,19 @@ export default async function authorRoutes(server: FastifyInstance) {
     const { id } = request.params as { id: string };
     try {
       const data = authorSchema.parse(request.body);
+      const existingAuthor = await prisma.author.findUnique({ where: { id: Number(id) } });
+      if (!existingAuthor) {
+        return reply.status(404).send({ error: 'Author not found' });
+      }
       const updatedAuthor = await prisma.author.update({
         where: { id: Number(id) },
         data,
       });
       return updatedAuthor;
     } catch (error) {
+      if (error instanceof Error && error.message.includes('Record to update not found')) {
+        return reply.status(404).send({ error: 'Author not found' });
+      }
       return reply.status(400).send({ error: (error as Error).message });
     }
   });
